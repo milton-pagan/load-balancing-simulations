@@ -16,11 +16,11 @@ class QueueFunctions(object):
 
     # Counts values greater than
     @staticmethod
-    def count_greater(x, n, *num_queues):
+    def upper_tail_prob(x, n, *num_queues):
         count = 0
 
         for value in num_queues:
             if value / np.sqrt(n) > x / np.sqrt(n):
                 count += 1
 
-        return count
+        return count / len(num_queues)

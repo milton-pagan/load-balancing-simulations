@@ -1,8 +1,6 @@
 import time
-
 import numpy as np
 from matplotlib import pyplot as plt
-
 from QueueFunctions import QueueFunctions
 
 
@@ -22,7 +20,7 @@ class SimulationHW:
     q_avg = 0  # Queue length average
 
     norm_q_perpendicular, qpe_i = None, 0  # Perpendicular norm, index
-    norm_q_parallel, qpa_i = None, 0  # Parallel norm, index
+    queue_sums, qs_i = None, 0  # Queue lengths sum
 
     # Definitions for Halfin-Witt Simulation
 
@@ -37,7 +35,7 @@ class SimulationHW:
         self.num_arrivals = arrivals
         self.epsilon = (1 / np.sqrt(n))
 
-        self.norm_q_parallel = np.ones((self.num_arrivals,))
+        self.queue_sums = np.zeros((self.num_arrivals,))
         self.norm_q_perpendicular = np.ones((self.num_arrivals,))
 
         # SETUP
@@ -123,13 +121,13 @@ class SimulationHW:
 
             q_avg = queue_sum / self.n
 
-            self.norm_q_parallel[self.qpa_i] = queue_sum / np.sqrt(self.n)
-            self.qpa_i += 1
+            self.queue_sums[self.qs_i] = queue_sum
+            self.qs_i += 1
 
             self.norm_q_perpendicular[self.qpe_i] = QueueFunctions.perpendicular_norm(q_avg, **self.queues)
             self.qpe_i += 1
 
-            print(i)  # TODO: REMOVE THIS LINE
+            print(i)
 
         print("--- %s seconds ---" % (time.time() - start_time))
 
@@ -137,22 +135,16 @@ class SimulationHW:
     def draw_plots(self):
         plt.style.use('seaborn-dark')
 
-        # Parallel norm plot
+        # Queue length sums
 
-        half_parallel_norm = np.array(self.norm_q_parallel[int(len(self.norm_q_parallel) / 2):])
+        half_queue_sums = np.array(self.queue_sums[int(len(self.queue_sums) / 2):])
 
         plt.subplot(2, 1, 1)
-        plt.plot(range(len(half_parallel_norm)), half_parallel_norm, label='Parallel Norm', color='brown')
-
-        # Calculates running average. Has a significant negative effect on performance
-
-        # parallel_avg = np.convolve(half_parallel_norm, np.ones((len(half_parallel_norm),)))[
-        #                0:len(half_parallel_norm)] / np.arange(1, len(half_parallel_norm) + 1)
-        # plt.plot(range(len(half_parallel_norm)), parallel_avg, label='Average Norm', color='blue')
+        plt.plot(range(len(half_queue_sums)), half_queue_sums, label='Queue Lengths Sum', color='brown')
 
         plt.xlabel('Jobs')
         plt.ylabel('Magnitude')
-        plt.title('Q Parallel Norm')
+        plt.title('Sum of Queue Lengths')
         plt.grid(True)
         plt.legend(loc='upper right')
         plt.autoscale()
@@ -181,49 +173,65 @@ class SimulationHW:
 
         # Halfin-Witt
 
-        # TODO: FIND A WAY TO DETERMINE CONSTANTS
-
         # Empty Queues
+        plt.figure(1)
         x_values = np.arange(1, self.n + 1, 1)
-        x_exp = np.linspace(0, self.n, 10000)
 
         y_values = [
-            QueueFunctions.count_greater(i, self.n, *self.empty_queues[int(len(self.empty_queues) / 2):]) / len(
-                self.empty_queues) for i in x_values]
+            np.abs(np.log(
+                QueueFunctions.upper_tail_prob(i, self.n, *self.empty_queues[int(len(self.empty_queues) / 2):])))
+            for i in x_values]
 
-        # param, cov = optimize.curve_fit(QueueFunctions.exp_sf, x_values, y_values)
+        temp_y = [i for i in y_values if i != np.inf]
+        temp_x = [x_values[i] for i in range(len(temp_y))]
+
+        m = np.polyfit(temp_x, temp_y, 2)
+
+        curve_fit_y = [m[0] * (i ** 2) + m[1] * i + m[2] for i in temp_x]
 
         plt.scatter(x_values, y_values)
+        plt.plot(temp_x, curve_fit_y, label='Curve Fit', color='brown')
 
-        plt.ylabel('Probability')
+        plt.title("Empty queues")
+        plt.ylabel('Log of Probability')
         plt.xlabel('x')
         plt.grid()
         plt.autoscale()
+        plt.legend(loc='upper right')
         plt.show()
+
+        print(m)
 
         # Two or more
+        plt.figure(2)
         y_values = [
-            QueueFunctions.count_greater(i, self.n, *self.two_queues[int(len(self.two_queues) / 2):]) / len(
-                self.two_queues) for i in x_values]
+            np.abs(
+                np.log(QueueFunctions.upper_tail_prob(i, self.n, *self.two_queues[int(len(self.two_queues) / 2):])))
+            for i in x_values]
 
-        # l_1 = [y_values[i] * np.exp(2 * (x_values[i])) for i in range(len(x_values))]
-        # l_2 = [y_values[i] * np.exp((1 / 16) * (x_values[i])) for i in range(len(x_values))]
+        temp_y = [i for i in y_values if i != np.inf]
+        temp_x = [x_values[i] for i in range(len(temp_y))]
 
-        plt.scatter(x_values, y_values)
+        m = np.polyfit(temp_x, temp_y, 1)
 
-        plt.plot(x_exp, 1 * (1 / np.exp(2 * x_exp)), color='brown')
-        plt.plot(x_exp, 1 * (1 / np.exp((1 / 16) * x_exp)), color='purple')
+        linear_fit_y = [m[0] * i + m[1] for i in temp_x]
 
-        plt.ylabel('Probability')
+        plt.scatter(temp_x, temp_y)
+        plt.plot(temp_x, linear_fit_y, label='Linear Fit', color='brown')
+
+        plt.title("Queues with two or more customers")
+        plt.ylabel('Log of Probability')
         plt.xlabel('x')
         plt.grid()
         plt.autoscale()
+        plt.legend(loc='upper right')
         plt.show()
 
-        para_avg = np.average(half_parallel_norm)
+        print(m)
+
         perp_avg = np.average(half_perpendicular_norm)
 
-        print(para_avg, perp_avg)
+        print(perp_avg)
 
     # To count number of empty queues, etc.
     def count(self, length, mode):
