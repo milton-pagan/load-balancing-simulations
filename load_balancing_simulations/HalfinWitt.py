@@ -1,7 +1,7 @@
 import time
 import numpy as np
 from matplotlib import pyplot as plt
-from QueueFunctions import QueueFunctions
+from load_balancing_simulations.QueueFunctions import QueueFunctions
 
 
 class SimulationHW:
