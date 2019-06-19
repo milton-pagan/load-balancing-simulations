@@ -5,4 +5,4 @@ Simulation designed to study the approximation of a system of queues, following 
 at the SURE 2019 program at Georgia Tech.
 
 ## Usage
-Run the file named load_balancing_simulations. The source code can be modified to vary parameters and select different regimes for testing 
+Run the file named load_balancing_simulations. The source code can be modified to vary parameters and select different regimes for testing. 
