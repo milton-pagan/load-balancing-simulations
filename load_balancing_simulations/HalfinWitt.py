@@ -1,28 +1,15 @@
 import time
+
 import numpy as np
 from matplotlib import pyplot as plt
+
 from load_balancing_simulations.QueueFunctions import QueueFunctions
 
+from load_balancing_simulations.SimulationBase import SimulationBase
 
-class SimulationHW:
+
+class SimulationHW(SimulationBase):
     # Class for Halfin Witt regime simulations
-
-    n = None  # Number of servers
-    lambda_ = None
-    epsilon = None
-    num_arrivals = None  # Runs/Number of arrivals
-
-    INF = 10 ** 9  # "Infinity"
-
-    T = 0  # CLOCK
-
-    queues = {}
-    service_times = {}
-
-    q_avg = 0  # Queue length average
-
-    norm_q_perpendicular, qpe_i = None, 0  # Perpendicular norm, index
-    queue_sums, qs_i = None, 0  # Queue lengths sum
 
     # Definitions for Halfin-Witt Simulation
 
@@ -138,7 +125,7 @@ class SimulationHW:
 
     # PLOTTING
     def draw_plots(self):
-        # Plots the sample paths, as well as plotting the log of upper tail probabilities
+        # Plots the log of upper tail probabilities
 
         plt.style.use('seaborn-dark')
 
@@ -229,10 +216,6 @@ class SimulationHW:
         plt.show()
 
         print(m)
-
-        perp_avg = np.average(half_perpendicular_norm)
-
-        print(perp_avg)
 
     # To count number of empty queues, etc.
     def count(self, length, mode):
