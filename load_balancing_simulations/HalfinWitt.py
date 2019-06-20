@@ -5,6 +5,8 @@ from load_balancing_simulations.QueueFunctions import QueueFunctions
 
 
 class SimulationHW:
+    # Class for Halfin Witt regime simulations
+
     n = None  # Number of servers
     lambda_ = None
     epsilon = None
@@ -63,6 +65,9 @@ class SimulationHW:
 
     # RUN
     def run_simulation(self):
+        # Simulates events in a continuous time space by determining which will happen the soonest
+        # from given service and arrival times.
+
         start_time = time.time()
         for i in range(self.num_arrivals):
 
@@ -133,6 +138,8 @@ class SimulationHW:
 
     # PLOTTING
     def draw_plots(self):
+        # Plots the sample paths, as well as plotting the log of upper tail probabilities
+
         plt.style.use('seaborn-dark')
 
         # Queue length sums
@@ -155,12 +162,6 @@ class SimulationHW:
 
         plt.subplot(2, 1, 2)
         plt.plot(range(len(half_perpendicular_norm)), half_perpendicular_norm, label='Perpendicular Norm')
-
-        # Calculates running average. Has a significant negative effect on performance
-
-        # perpendicular_avg = np.convolve(half_perpendicular_norm, np.ones((len(half_perpendicular_norm),)))[
-        #                0:len(half_perpendicular_norm)] / np.arange(1, len(half_perpendicular_norm) + 1)
-        # plt.plot(range(len(half_perpendicular_norm)), perpendicular_avg, label='Average Norm')
 
         plt.xlabel('Jobs')
         plt.ylabel('Magnitude')

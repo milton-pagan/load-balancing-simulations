@@ -12,7 +12,7 @@ from load_balancing_simulations.HalfinWitt import SimulationHW
 # sim.run_simulation()
 # sim.draw_plots()
 
-sim = SimulationHW(500, 10 ** 6)
+sim = SimulationHW(50, 10 ** 6)
 
 sim.run_simulation()
 sim.draw_plots()

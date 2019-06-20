@@ -6,6 +6,8 @@ from load_balancing_simulations.QueueFunctions import QueueFunctions
 
 
 class SimulationHT:
+    # Class for Heavy Traffic simulations
+
     n = None  # Number of queues
     lambda_ = None
     epsilon = None
@@ -54,12 +56,16 @@ class SimulationHT:
 
     # RUN
     def run_simulation(self):
+        # Simulates events in a continuous time space by determining which will happen the soonest
+        # from given service and arrival times.
+
         start_time = time.time()
         for i in range(self.num_arrivals):
 
             min_s = min(self.service_times, key=self.service_times.get)
 
-            if min(self.t, self.service_times.get(min_s)) == self.t:  # Arrival
+            # Arrival
+            if min(self.t, self.service_times.get(min_s)) == self.t:
                 self.T += self.t
                 shortest = min(self.queues, key=self.queues.get)
 
@@ -82,7 +88,8 @@ class SimulationHT:
 
                 self.t = np.random.exponential(1 / (self.n * self.lambda_))
 
-            else:  # Service completed
+            # Service completed
+            else:
                 self.T += self.service_times.get(min_s)
 
                 aux = self.service_times.get(min_s)
@@ -113,8 +120,9 @@ class SimulationHT:
             self.qpe_i += 1
         print("--- %s seconds ---" % (time.time() - start_time))
 
+    # PLOTTING
     def draw_plots(self):
-        # PLOTTING
+        # Plots sample paths, as well as histograms to show exponential behavior
 
         plt.style.use('seaborn-dark')
 
@@ -139,12 +147,6 @@ class SimulationHT:
         plt.subplot(2, 1, 2)
         plt.plot(range(len(half_perpendicular_norm)), half_perpendicular_norm, label='Perpendicular Norm')
 
-        # Calculates running average. Has a significant negative effect on performance
-
-        # perpendicular_avg = np.convolve(half_perpendicular_norm, np.ones((len(half_perpendicular_norm),)))[
-        #                0:len(half_perpendicular_norm)] / np.arange(1, len(half_perpendicular_norm) + 1)
-        # plt.plot(range(len(half_perpendicular_norm)), perpendicular_avg, label='Average Norm')
-
         plt.xlabel('Jobs')
         plt.ylabel('Magnitude')
         plt.title('Q Perpendicular Norm')
@@ -163,7 +165,6 @@ class SimulationHT:
                                                edgecolor='black', linewidth=1, label='Histogram')
         plt.autoscale()
         plt.xlabel('epsilon * sqrt(n) * q_parallel')
-        # plt.ylabel("Frequency")
 
         # Curve Fit
 
