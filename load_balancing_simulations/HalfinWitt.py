@@ -4,7 +4,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from load_balancing_simulations.QueueFunctions import QueueFunctions
-
 from load_balancing_simulations.SimulationBase import SimulationBase
 
 
@@ -19,32 +18,10 @@ class SimulationHW(SimulationBase):
 
     # Constructor
     def __init__(self, n, arrivals):
-        self.n = n
-        self.lambda_ = 1 - (1 / np.sqrt(n))
-        self.num_arrivals = arrivals
+
+        SimulationBase.__init__(self, n, 1 - (1 / np.sqrt(n)), arrivals)
+
         self.epsilon = (1 / np.sqrt(n))
-
-        self.queue_sums = np.zeros((self.num_arrivals,))
-        self.norm_q_perpendicular = np.ones((self.num_arrivals,))
-
-        # SETUP
-
-        for i in range(n):
-            self.queues.update({'q_' + str(i): 0})
-
-            self.service_times.update({'s_' + str(i): self.INF})
-
-        self.t = np.random.exponential(1 / (n * self.lambda_))
-
-        self.T += self.t
-
-        temp_rand = str(np.random.randint(0, self.n))
-
-        # First arrival is added to a randomly selected queue
-        self.queues['q_' + temp_rand] += 1
-        self.service_times['s_' + temp_rand] = np.random.exponential(1)
-
-        self.t = np.random.exponential(1 / (n * self.lambda_))
 
         self.empty_queues.append(self.n - 1)
         self.two_queues.append(0)
@@ -129,35 +106,7 @@ class SimulationHW(SimulationBase):
 
         plt.style.use('seaborn-dark')
 
-        # Queue length sums
-
-        half_queue_sums = np.array(self.queue_sums[int(len(self.queue_sums) / 2):])
-
-        plt.subplot(2, 1, 1)
-        plt.plot(range(len(half_queue_sums)), half_queue_sums, label='Queue Lengths Sum', color='brown')
-
-        plt.xlabel('Jobs')
-        plt.ylabel('Magnitude')
-        plt.title('Sum of Queue Lengths')
-        plt.grid(True)
-        plt.legend(loc='upper right')
-        plt.autoscale()
-
-        # Perpendicular norm plot
-
-        half_perpendicular_norm = np.array(self.norm_q_perpendicular[int(len(self.norm_q_perpendicular) / 2):])
-
-        plt.subplot(2, 1, 2)
-        plt.plot(range(len(half_perpendicular_norm)), half_perpendicular_norm, label='Perpendicular Norm')
-
-        plt.xlabel('Jobs')
-        plt.ylabel('Magnitude')
-        plt.title('Q Perpendicular Norm')
-        plt.grid(True)
-        plt.legend(loc='upper right')
-        plt.autoscale()
-
-        plt.show()
+        SimulationBase.draw_plots(self)
 
         # Halfin-Witt
 

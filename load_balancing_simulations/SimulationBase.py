@@ -7,6 +7,8 @@ from load_balancing_simulations.QueueFunctions import QueueFunctions
 
 
 class SimulationBase(object):
+    # Base simulation class
+
     n = None  # Number of queues
     lambda_ = None
     epsilon = None
