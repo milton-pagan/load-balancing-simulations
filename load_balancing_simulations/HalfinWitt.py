@@ -19,7 +19,9 @@ class SimulationHW(SimulationBase):
     # Constructor
     def __init__(self, n, arrivals):
 
-        SimulationBase.__init__(self, n, 1 - (1 / np.sqrt(n)), arrivals)
+        lambda_ = 1 - (1 / np.sqrt(n))
+
+        super().__init__(n, lambda_, arrivals)
 
         self.epsilon = (1 / np.sqrt(n))
 
@@ -106,7 +108,7 @@ class SimulationHW(SimulationBase):
 
         plt.style.use('seaborn-dark')
 
-        SimulationBase.draw_plots(self)
+        super().draw_plots()
 
         # Halfin-Witt
 

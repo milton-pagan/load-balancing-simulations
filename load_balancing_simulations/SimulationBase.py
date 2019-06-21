@@ -137,7 +137,7 @@ class SimulationBase(object):
         plt.plot(range(len(half_queue_sums)), half_queue_sums, label='Queue Lengths Sum', color='brown')
 
         plt.xlabel('Jobs')
-        plt.ylabel('Magnitude')
+        plt.ylabel('Sum')
         plt.title('Sum of Queue Lengths')
         plt.grid(True)
         plt.legend(loc='upper right')

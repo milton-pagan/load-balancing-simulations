@@ -15,13 +15,13 @@ class SimulationHT(SimulationBase):
 
         # Histogram
 
-        plot_data = self.epsilon * SimulationBase.draw_plots(self)
+        plot_data = self.epsilon * super().draw_plots()
 
         bin_heights, bin_borders, _ = plt.hist(plot_data, density=True,
                                                bins='doane', color='green',
                                                edgecolor='black', linewidth=1, label='Histogram')
         plt.autoscale()
-        plt.xlabel('epsilon * sqrt(n) * q_parallel')
+        plt.xlabel('epsilon * sum of queue lengths')
 
         # Curve Fit
 

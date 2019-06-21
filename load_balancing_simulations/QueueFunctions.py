@@ -7,7 +7,7 @@ class QueueFunctions(object):
 
     @staticmethod
     def perpendicular_norm(average_queue_length, **queue):
-        # Calculates the norm of q perpendicular
+        # Returns the norm of q perpendicular
         temp_sum = 0
 
         for key, value in queue.items():
@@ -17,9 +17,9 @@ class QueueFunctions(object):
 
     @staticmethod
     def upper_tail_prob(x, n, *num_queues):
-        # Determines upper tail probability.
         # Parameters: x value to be evaluated, number of servers/queues in the system,
         # and the list with queue counts.
+        # Returns upper tail probability.
 
         count = 0
 

@@ -15,13 +15,13 @@ class SimulationMF(SimulationBase):
 
         # Histogram
 
-        plot_data = SimulationBase.draw_plots(self)
+        plot_data = super().draw_plots()
 
         bin_heights, bin_borders, _ = plt.hist(plot_data, density=True,
                                                bins='doane', color='green',
                                                edgecolor='black', linewidth=1, label='Histogram')
         plt.autoscale()
-        plt.xlabel('sqrt(n) * q_parallel')
+        plt.xlabel('sum of queue lengths')
 
         # Curve Fit
 
